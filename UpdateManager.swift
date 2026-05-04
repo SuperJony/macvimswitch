@@ -5,7 +5,7 @@ class UpdateManager {
     static let shared = UpdateManager()
 
     private let currentVersion: String
-    private let githubRepo = "jackiexiao/macvimswitch"
+    private let githubRepo = "makerjackie/macvimswitch"
     private var updateCheckTimer: Timer?
 
     private init() {
@@ -37,7 +37,7 @@ class UpdateManager {
     func checkForUpdates(silent: Bool = false) {
         Task {
             do {
-                if let latestVersion = try await fetchLatestVersion() {
+                if let latestVersion = try await fetchLatestVersion(), shouldCheckVersion(latestVersion) {
                     if isNewerVersion(latestVersion, than: currentVersion) {
                         await MainActor.run {
                             self.showUpdateAlert(newVersion: latestVersion)

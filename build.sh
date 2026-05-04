@@ -102,9 +102,9 @@ cat > dist/MacVimSwitch.app/Contents/Info.plist << EOL
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleShortVersionString</key>
-    <string>0.7.3</string>
+    <string>0.7.4</string>
     <key>CFBundleVersion</key>
-    <string>0.7.3</string>
+    <string>0.7.4</string>
     <key>LSMinimumSystemVersion</key>
     <string>11.0</string>
     <key>LSUIElement</key>
