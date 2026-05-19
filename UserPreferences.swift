@@ -90,7 +90,8 @@ class UserPreferences {
                 "com.exafunction.windsurf",
                 "md.obsidian",
                 "dev.warp.Warp-Stable",
-                "com.todesktop.230313mzl4w4u92"
+                "com.todesktop.230313mzl4w4u92",
+                "com.mitchellh.ghostty"
             ])
         }
 
