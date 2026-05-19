@@ -5,6 +5,7 @@ import Carbon
 enum CustomShortcutType: String, CaseIterable, Identifiable {
     case capsLock = "capsLock"
     case ctrlOpenBracket = "ctrlOpenBracket"
+    case ctrlB = "ctrlB"
     case ctrlP = "ctrlP"
     case ctrlT = "ctrlT"
     case commandSpace = "commandSpace"
@@ -23,6 +24,7 @@ enum CustomShortcutType: String, CaseIterable, Identifiable {
         switch self {
         case .capsLock: return "CapsLock → ESC"
         case .ctrlOpenBracket: return "Ctrl+[ → ESC"
+        case .ctrlB: return "Ctrl+B → 切换到英文"
         case .ctrlP: return "Ctrl+P → 切换到英文"
         case .ctrlT: return "Ctrl+T → 切换到英文"
         case .commandSpace: return "Command+Space → ESC"
@@ -41,6 +43,7 @@ enum CustomShortcutType: String, CaseIterable, Identifiable {
         switch self {
         case .capsLock: return "将 CapsLock 键映射为 ESC (最流行)"
         case .ctrlOpenBracket: return "使用 Ctrl+[ 替代 ESC (Vim 原生)"
+        case .ctrlB: return "按下 Ctrl+B 时切换到英文，事件继续传给应用"
         case .ctrlP: return "按下 Ctrl+P 时切换到英文，事件继续传给应用"
         case .ctrlT: return "按下 Ctrl+T 时切换到英文，事件继续传给应用"
         case .commandSpace: return "Command+Space 组合键切换到英文"
@@ -61,7 +64,7 @@ enum CustomShortcutType: String, CaseIterable, Identifiable {
             return true // 需要系统级权限或特殊处理
         case .commandSpace, .fnQ, .fnH, .fnJ:
             return true // 涉及修饰键组合
-        case .ctrlOpenBracket, .ctrlP, .ctrlT, .doubleJ, .doubleK, .jkSequence, .singleShift:
+        case .ctrlOpenBracket, .ctrlB, .ctrlP, .ctrlT, .doubleJ, .doubleK, .jkSequence, .singleShift:
             return false // 普通按键处理
         }
     }
@@ -86,6 +89,9 @@ struct ShortcutConfig {
             modifiers = nil
         case .ctrlOpenBracket:
             keyCode = 0x21 // [ 键码
+            modifiers = .maskControl
+        case .ctrlB:
+            keyCode = 0x0B // B 键码
             modifiers = .maskControl
         case .ctrlP:
             keyCode = 0x23 // P 键码
@@ -227,6 +233,9 @@ class CustomShortcutManager {
 
         case .ctrlOpenBracket:
             return processCtrlOpenBracket(keyCode: keyCode, flags: flags, currentTime: currentTime)
+
+        case .ctrlB:
+            return processCtrlCombo(type: .ctrlB, keyCode: keyCode, flags: flags, targetKeyCode: 0x0B)
 
         case .ctrlP:
             return processCtrlCombo(type: .ctrlP, keyCode: keyCode, flags: flags, targetKeyCode: 0x23)
