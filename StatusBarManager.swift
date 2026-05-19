@@ -144,6 +144,7 @@ class StatusBarManager {
             (.commandSpace, "Command+Space → ESC"),
             (.capsLock, "CapsLock → ESC"),
             (.ctrlOpenBracket, "Ctrl+[ → ESC"),
+            (.ctrlB, "Ctrl+B → 切换到英文"),
             (.ctrlP, "Ctrl+P → 切换到英文"),
             (.ctrlT, "Ctrl+T → 切换到英文"),
             (.jkSequence, "JK 序列 → ESC"),
