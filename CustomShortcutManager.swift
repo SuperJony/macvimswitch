@@ -5,6 +5,8 @@ import Carbon
 enum CustomShortcutType: String, CaseIterable, Identifiable {
     case capsLock = "capsLock"
     case ctrlOpenBracket = "ctrlOpenBracket"
+    case ctrlP = "ctrlP"
+    case ctrlT = "ctrlT"
     case commandSpace = "commandSpace"
     case doubleJ = "doubleJ"
     case doubleK = "doubleK"
@@ -21,6 +23,8 @@ enum CustomShortcutType: String, CaseIterable, Identifiable {
         switch self {
         case .capsLock: return "CapsLock → ESC"
         case .ctrlOpenBracket: return "Ctrl+[ → ESC"
+        case .ctrlP: return "Ctrl+P → 切换到英文"
+        case .ctrlT: return "Ctrl+T → 切换到英文"
         case .commandSpace: return "Command+Space → ESC"
         case .doubleJ: return "双击 J → ESC"
         case .doubleK: return "双击 K → ESC"
@@ -37,6 +41,8 @@ enum CustomShortcutType: String, CaseIterable, Identifiable {
         switch self {
         case .capsLock: return "将 CapsLock 键映射为 ESC (最流行)"
         case .ctrlOpenBracket: return "使用 Ctrl+[ 替代 ESC (Vim 原生)"
+        case .ctrlP: return "按下 Ctrl+P 时切换到英文，事件继续传给应用"
+        case .ctrlT: return "按下 Ctrl+T 时切换到英文，事件继续传给应用"
         case .commandSpace: return "Command+Space 组合键切换到英文"
         case .doubleJ: return "快速按两次 J 键切换到英文"
         case .doubleK: return "快速按两次 K 键切换到英文"
@@ -55,7 +61,7 @@ enum CustomShortcutType: String, CaseIterable, Identifiable {
             return true // 需要系统级权限或特殊处理
         case .commandSpace, .fnQ, .fnH, .fnJ:
             return true // 涉及修饰键组合
-        case .ctrlOpenBracket, .doubleJ, .doubleK, .jkSequence, .singleShift:
+        case .ctrlOpenBracket, .ctrlP, .ctrlT, .doubleJ, .doubleK, .jkSequence, .singleShift:
             return false // 普通按键处理
         }
     }
@@ -80,6 +86,12 @@ struct ShortcutConfig {
             modifiers = nil
         case .ctrlOpenBracket:
             keyCode = 0x21 // [ 键码
+            modifiers = .maskControl
+        case .ctrlP:
+            keyCode = 0x23 // P 键码
+            modifiers = .maskControl
+        case .ctrlT:
+            keyCode = 0x11 // T 键码
             modifiers = .maskControl
         case .commandSpace:
             keyCode = 0x31 // 空格键键码
@@ -216,6 +228,12 @@ class CustomShortcutManager {
         case .ctrlOpenBracket:
             return processCtrlOpenBracket(keyCode: keyCode, flags: flags, currentTime: currentTime)
 
+        case .ctrlP:
+            return processCtrlCombo(type: .ctrlP, keyCode: keyCode, flags: flags, targetKeyCode: 0x23)
+
+        case .ctrlT:
+            return processCtrlCombo(type: .ctrlT, keyCode: keyCode, flags: flags, targetKeyCode: 0x11)
+
         case .commandSpace:
             return processCommandSpace(keyCode: keyCode, flags: flags, currentTime: currentTime)
 
@@ -267,6 +285,13 @@ class CustomShortcutManager {
         // [ 键码是 0x21，需要 Control 修饰键
         if keyCode == 0x21 && flags.contains(.maskControl) && !flags.contains(.maskCommand) && !flags.contains(.maskAlternate) {
             return .ctrlOpenBracket
+        }
+        return nil
+    }
+
+    private func processCtrlCombo(type: CustomShortcutType, keyCode: Int64, flags: CGEventFlags, targetKeyCode: Int64) -> CustomShortcutType? {
+        if keyCode == targetKeyCode && flags.contains(.maskControl) && !flags.contains(.maskCommand) && !flags.contains(.maskAlternate) {
+            return type
         }
         return nil
     }
